@@ -74,3 +74,29 @@ Before you submit your Pull Request (PR) consider the following guidelines:
     ```
 
 That's it! Thank you for your contribution!
+
+## Generating containers.patch
+
+When contributing keep in mind that the submodules are upstream projects hosted at their respective 
+locations. We are keeping a `containers.patch` file to will be used to add the relevant bits and 
+pieces that are necessary to deploy each of the submodules to the desired container runtime.  
+Instead of committing changes to the upstream projects we generate the `containers.patch` file and
+commit  it into the top-level project.
+
+To generate the `containers.patch` file, follow these steps:
+
+1. Navigate to each of the sub modules and stage the changes using `git add`. For example:
+    ```sh
+    cd spring-petclinic-angular
+    git add .
+    cd ../spring-petclinic-rest
+    git add .
+    ```
+
+2. Once all changes are staged, navigate back to the root directory of the repository and run the following command to generate the patch file:
+    ```sh
+    git diff --submodule=diff HEAD > containers.patch
+    ```
+
+This will create a `containers.patch` file that contains the differences for all submodules that 
+can be committed to the top-level project.

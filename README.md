@@ -1,57 +1,28 @@
-# Project Name
+# README
 
-(short, 1-3 sentenced, description of the project)
-
-## Features
-
-This project framework provides the following features:
-
-* Feature 1
-* Feature 2
-* ...
+This project illustrates how to deploy the Spring Pet Clinic Angular application
+and Spring Pet Clinic Spring Boot REST application to the Azure container runtime
+of your choice.
 
 ## Getting Started
 
 ### Prerequisites
 
-(ideally very short, if any)
-
-- OS
-- Library version
-- ...
+1. Java 21
+1. Maven
 
 ### Installation
 
-(ideally very short)
+To get started we need to apply the necessary patches to the Spring Pet Clinic 
+submodules by patch their sources so you can easily deploy it to the container
+runtime of your choice. To do so use the command line below:
 
-- npm install [package name]
-- mvn install
-- ...
+```shell
+  git apply containers.patch
+```
 
-### Quickstart
-(Add steps to get up and running quickly)
+### Container runtime
 
-1. git clone [repository clone url]
-2. cd [repository name]
-3. ...
+Pick your desired container runtime below:
 
-
-## Demo
-
-A demo app is included to show how to use the project.
-
-To run the demo, follow these steps:
-
-(Add steps to start up the demo)
-
-1.
-2.
-3.
-
-## Resources
-
-(Any additional resources or related projects)
-
-- Link to supporting information
-- Link to similar sample
-- ...
+1. [Azure Container Apps](ACA.md)

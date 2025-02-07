@@ -1,0 +1,301 @@
+Submodule spring-petclinic-angular contains modified content
+diff --git a/spring-petclinic-angular/.gitignore b/spring-petclinic-angular/.gitignore
+index e8b585e..beaea22 100644
+--- a/spring-petclinic-angular/.gitignore
++++ b/spring-petclinic-angular/.gitignore
+@@ -42,3 +42,9 @@ testem.log
+ .DS_Store
+ Thumbs.db
+ *.iml
++
++# 
++# Support Maven POM file to use Paketo buildpack for building container image
++#
++node/
++target/
+diff --git a/spring-petclinic-angular/angular.json b/spring-petclinic-angular/angular.json
+index 3905061..29a6c15 100644
+--- a/spring-petclinic-angular/angular.json
++++ b/spring-petclinic-angular/angular.json
+@@ -60,6 +60,48 @@
+                   "with": "src/environments/environment.prod.ts"
+                 }
+               ]
++            },
++            "local": {
++              "budgets": [
++                {
++                  "type": "anyComponentStyle",
++                  "maximumWarning": "6kb"
++                }
++              ],
++              "optimization": true,
++              "outputHashing": "all",
++              "sourceMap": false,
++              "namedChunks": false,
++              "extractLicenses": true,
++              "vendorChunk": false,
++              "buildOptimizer": true,
++              "fileReplacements": [
++                {
++                  "replace": "src/environments/environment.ts",
++                  "with": "src/environments/environment.local.ts"
++                }
++              ]
++            },
++            "aca": {
++              "budgets": [
++                {
++                  "type": "anyComponentStyle",
++                  "maximumWarning": "6kb"
++                }
++              ],
++              "optimization": true,
++              "outputHashing": "all",
++              "sourceMap": false,
++              "namedChunks": false,
++              "extractLicenses": true,
++              "vendorChunk": false,
++              "buildOptimizer": true,
++              "fileReplacements": [
++                {
++                  "replace": "src/environments/environment.ts",
++                  "with": "src/environments/environment.local.ts"
++                }
++              ]
+             }
+           },
+           "defaultConfiguration": ""
+diff --git a/spring-petclinic-angular/pom.xml b/spring-petclinic-angular/pom.xml
+new file mode 100644
+index 0000000..b252041
+--- /dev/null
++++ b/spring-petclinic-angular/pom.xml
+@@ -0,0 +1,119 @@
++<project xmlns="http://maven.apache.org/POM/4.0.0"
++         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
++    <modelVersion>4.0.0</modelVersion>
++
++    <groupId>com.example</groupId>
++    <artifactId>spring-petclinic-angular</artifactId>
++    <version>1.0.0</version>
++
++    <properties>
++        <node.version>v22.13.0</node.version> 
++        <npm.version>8.19.2</npm.version> 
++        <frontend-maven-plugin.version>1.11.3</frontend-maven-plugin.version>
++        <environment>local</environment>
++    </properties>
++
++    <build>
++        <plugins>
++            <plugin>
++                <groupId>com.github.eirslett</groupId>
++                <artifactId>frontend-maven-plugin</artifactId>
++                <version>${frontend-maven-plugin.version}</version>
++                <executions>
++                    <execution>
++                        <id>install node and npm</id>
++                        <goals>
++                            <goal>install-node-and-npm</goal>
++                        </goals>
++                        <configuration>
++                            <nodeVersion>${node.version}</nodeVersion>
++                            <npmVersion>${npm.version}</npmVersion>
++                        </configuration>
++                    </execution>
++                    <execution>
++                        <id>npm install</id>
++                        <goals>
++                            <goal>npm</goal>
++                        </goals>
++                        <configuration>
++                            <arguments>install</arguments>
++                        </configuration>
++                    </execution>
++                    <execution>
++                        <id>npm build</id>
++                        <goals>
++                            <goal>npm</goal>
++                        </goals>
++                        <configuration>
++                            <arguments>run build</arguments>
++                        </configuration>
++                    </execution>
++                </executions>
++            </plugin>
++        </plugins>
++    </build>
++
++    <profiles>
++        <profile>
++            <id>docker</id>
++            <build>
++                <plugins>
++                    <plugin>
++                        <groupId>com.github.eirslett</groupId>
++                        <artifactId>frontend-maven-plugin</artifactId>
++                        <version>${frontend-maven-plugin.version}</version>
++                        <executions>
++                            <execution>
++                                <id>ng build staging</id>
++                                <goals>
++                                    <goal>npm</goal>
++                                </goals>
++                                <configuration>
++                                    <arguments>run build -- --configuration=${environment}</arguments>
++                                </configuration>
++                            </execution>
++                        </executions>
++                    </plugin>
++                    <plugin>
++                        <groupId>org.codehaus.mojo</groupId>
++                        <artifactId>exec-maven-plugin</artifactId>
++                        <version>3.0.0</version>
++                        <executions>
++                            <execution>
++                                <id>docker-build</id>
++                                <goals>
++                                    <goal>exec</goal>
++                                </goals>
++                                <phase>package</phase>
++                                <configuration>
++                                    <executable>pack</executable>
++                                    <arguments>
++                                        <argument>build</argument>
++                                        <argument>spring-petclinic-angular</argument>
++                                        <argument>--buildpack</argument>
++                                        <argument>paketo-buildpacks/nginx</argument>
++                                        <argument>--builder</argument>
++                                        <argument>paketobuildpacks/builder-jammy-base</argument>
++                                        <argument>--env</argument>
++                                        <argument>PORT=8080</argument>
++                                        <argument>--env</argument>
++                                        <argument>BP_NODE_RUN_SCRIPTS=build</argument>
++                                        <argument>--env</argument>
++                                        <argument>BP_WEB_SERVER=nginx</argument>
++                                        <argument>--env</argument>
++                                        <argument>BP_WEB_SERVER_ENABLE_PUSH_STATE=true</argument>
++                                        <argument>--env</argument>
++                                        <argument>BP_NODE_VERSION=22.13.0</argument>
++                                        <argument>--env</argument>
++                                        <argument>BP_WEB_SERVER_ROOT=dist</argument>
++                                    </arguments>
++                                </configuration>
++                            </execution>
++                        </executions>
++                    </plugin>
++                </plugins>
++            </build>
++        </profile>
++    </profiles>
++</project>
+diff --git a/spring-petclinic-angular/src/environments/environment.aca.ts b/spring-petclinic-angular/src/environments/environment.aca.ts
+new file mode 100644
+index 0000000..2e30137
+--- /dev/null
++++ b/spring-petclinic-angular/src/environments/environment.aca.ts
+@@ -0,0 +1,27 @@
++/*
++ *
++ *  * Copyright 2016-2017 the original author or authors.
++ *  *
++ *  * Licensed under the Apache License, Version 2.0 (the "License");
++ *  * you may not use this file except in compliance with the License.
++ *  * You may obtain a copy of the License at
++ *  *
++ *  *      http://www.apache.org/licenses/LICENSE-2.0
++ *  *
++ *  * Unless required by applicable law or agreed to in writing, software
++ *  * distributed under the License is distributed on an "AS IS" BASIS,
++ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ *  * See the License for the specific language governing permissions and
++ *  * limitations under the License.
++ *
++ */
++
++// The file contents for the current environment will overwrite these during build.
++// The build system defaults to the dev environment which uses `environment.ts`, but if you do
++// `ng build --env=prod` then `environment.prod.ts` will be used instead.
++// The list of which env maps to which file can be found in `.angular-cli.json`.
++
++export const environment = {
++  production: true,
++  REST_API_URL: 'http://spring-backend:8080/petclinic/api/'
++};
+diff --git a/spring-petclinic-angular/src/environments/environment.local.ts b/spring-petclinic-angular/src/environments/environment.local.ts
+new file mode 100644
+index 0000000..481fcc5
+--- /dev/null
++++ b/spring-petclinic-angular/src/environments/environment.local.ts
+@@ -0,0 +1,27 @@
++/*
++ *
++ *  * Copyright 2016-2017 the original author or authors.
++ *  *
++ *  * Licensed under the Apache License, Version 2.0 (the "License");
++ *  * you may not use this file except in compliance with the License.
++ *  * You may obtain a copy of the License at
++ *  *
++ *  *      http://www.apache.org/licenses/LICENSE-2.0
++ *  *
++ *  * Unless required by applicable law or agreed to in writing, software
++ *  * distributed under the License is distributed on an "AS IS" BASIS,
++ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ *  * See the License for the specific language governing permissions and
++ *  * limitations under the License.
++ *
++ */
++
++// The file contents for the current environment will overwrite these during build.
++// The build system defaults to the dev environment which uses `environment.ts`, but if you do
++// `ng build --env=prod` then `environment.prod.ts` will be used instead.
++// The list of which env maps to which file can be found in `.angular-cli.json`.
++
++export const environment = {
++  production: false,
++  REST_API_URL: 'http://localhost:8081/petclinic/api/'
++};
+Submodule spring-petclinic-rest contains modified content
+diff --git a/spring-petclinic-rest/pom.xml b/spring-petclinic-rest/pom.xml
+index 1efba9d..2968680 100644
+--- a/spring-petclinic-rest/pom.xml
++++ b/spring-petclinic-rest/pom.xml
+@@ -480,4 +480,36 @@
+             </plugin>
+         </plugins>
+     </build>
++    <profiles>
++        <profile>
++            <id>docker</id>
++            <build>
++                <plugins>
++                    <plugin>
++                        <groupId>org.codehaus.mojo</groupId>
++                        <artifactId>exec-maven-plugin</artifactId>
++                        <executions>
++                            <execution>
++                                <phase>package</phase>
++                                <goals>
++                                    <goal>exec</goal>
++                                </goals>
++                                <configuration>
++                                    <executable>pack</executable>
++                                    <arguments>
++                                        <argument>build</argument>
++                                        <argument>spring-petclinic-rest</argument>
++                                        <argument>--builder</argument>
++                                        <argument>paketobuildpacks/builder-jammy-base</argument>
++                                        <argument>--path</argument>
++                                        <argument>target/${project.build.finalName}.jar</argument>
++                                    </arguments>
++                                </configuration>
++                            </execution>
++                        </executions>
++                    </plugin>
++                </plugins>
++            </build>
++        </profile>
++    </profiles>
+ </project>
