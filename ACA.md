@@ -1,4 +1,4 @@
-# Building and deploying to Azure Container Apps
+# Building and Deploying to Azure Container Apps
 
 This guide provides step-by-step instructions to deploy the Angular front-end and the Spring Boot REST back-end of the Spring Petclinic application to Azure Container Apps.
 
@@ -8,7 +8,7 @@ This guide provides step-by-step instructions to deploy the Angular front-end an
 2. **Docker**: Ensure you have Docker installed. You can download it from [here](https://docs.docker.com/get-docker/).
 3. **Paketo `pack` binary**: Ensure you have the Paketo `pack` binary installed. You can download it from [here](https://buildpacks.io/docs/tools/pack/).
 
-## Step 1: Build the Angular Front-end Docker image
+## Step 1: Build the Angular Front-end Docker Image
 
 1. Navigate to the Angular project directory:
     ```bash
@@ -32,9 +32,9 @@ The following options are passed to `pack`:
 > - `--env BP_NODE_VERSION=22.13.0`: Sets the environment variable `BP_NODE_VERSION` to `22.13.0`.
 > - `--env BP_WEB_SERVER_ROOT=dist`: Sets the environment variable `BP_WEB_SERVER_ROOT` to `dist`.
 
-## Step 2: Build the Spring Boot Back-end Docker image
+## Step 2: Build the Spring Boot Back-end Docker Image
 
-1. Navigate to the Spring Boot Back-end project directory:
+1. Navigate to the Spring Boot back-end project directory:
     ```bash
     cd ../spring-petclinic-rest
     ```
@@ -72,15 +72,15 @@ The following options are passed to `pack`:
     az acr login --name myAcrRegistry
     ```
 
-## Step 4: Tag the local Docker images and push them to the Azure Container Registry
+## Step 4: Tag the Local Docker Images and Push Them to the Azure Container Registry
 
-1. Tag and push the Angular frontend Docker image:
+1. Tag and push the Angular front-end Docker image:
     ```bash
-    docker tag spring-petclinic-angular:latest myacrregistry.azurecr.io
+    docker tag spring-petclinic-angular:latest myacrregistry.azurecr.io/spring-petclinic-angular:latest
     docker push myacrregistry.azurecr.io/spring-petclinic-angular:latest
-   ```
+    ```
 
-2. Tag and push the Spring Boot REST backed Docker image:
+2. Tag and push the Spring Boot REST back-end Docker image:
     ```bash
     docker tag spring-backend:latest myacrregistry.azurecr.io/spring-backend:latest
     docker push myacrregistry.azurecr.io/spring-backend:latest
@@ -116,3 +116,9 @@ To get the URL for the front-end, use the following Azure CLI command:
 ```bash
 az containerapp show --name angular-frontend --resource-group myResourceGroup --query properties.configuration.ingress.fqdn
 ```
+
+## Azure DevOps
+
+See [Azure DevOps Pipeline example](azure-pipelines-aca.yml) for an example of how to do everything mentioned above in a pipeline.
+
+If you are looking to redeploy the two applications after your initial deployment, we recommend using the [AzureContainerApps@1 task](https://learn.microsoft.com/azure/container-apps/azure-pipelines#deploy-an-existing-container-image-to-container-apps) instead of the `AzureCLI@2 task` in the `Deploy` stage in the pipeline example.

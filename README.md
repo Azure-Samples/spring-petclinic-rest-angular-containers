@@ -23,7 +23,7 @@ runtime of your choice. To do so, use the command line below:
 
 The `containers.patch` file contains the necessary changes to configure the Spring Pet Clinic Angular application and Spring Pet Clinic Spring Boot REST application for deployment to various Azure container runtimes. This includes:
 
-#### Angular Project Changes
+#### Angular App - Configuration Changes
 
 - **.gitignore**: Updates to exclude build directories such as `node/` and `target/`.
 - **angular.json**: Modifications to add new build configurations for local and ACA environments.
@@ -31,7 +31,7 @@ The `containers.patch` file contains the necessary changes to configure the Spri
 - **environment.aca.ts**: New environment configuration file for ACA deployments.
 - **environment.local.ts**: New environment configuration file for local deployments.
 
-#### Spring Boot REST Project Changes
+#### Spring Boot REST - Configuration Changes
 
 - **pom.xml**: Updates to include a Docker build profile using the `exec-maven-plugin` for building Docker images with Paketo buildpacks.
 
