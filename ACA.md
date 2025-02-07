@@ -20,7 +20,17 @@ This guide provides step-by-step instructions to deploy the Angular front-end an
     mvn clean install -Pdocker
     ```
 
-> **Note:** The `docker` Maven profile uses the `pack` binary and the `paketobuildpacks/builder-jammy-base` builder with the `paketo-buildpacks/nginx` buildpack to produce the Docker image.
+> **Note:** The `docker` Maven profile uses the `pack` binary and the `paketobuildpacks/builder-jammy-base` builder with the `paketo-buildpacks/nginx` buildpack to produce the Docker image. 
+
+The following options are passed to `pack`:
+> - `--buildpack paketo-buildpacks/nginx`: Specifies the buildpack to use for building the image.
+> - `--builder paketobuildpacks/builder-jammy-base`: Specifies the builder image to use.
+> - `--env PORT=8080`: Sets the environment variable `PORT` to `8080`.
+> - `--env BP_NODE_RUN_SCRIPTS=build`: Sets the environment variable `BP_NODE_RUN_SCRIPTS` to `build`.
+> - `--env BP_WEB_SERVER=nginx`: Sets the environment variable `BP_WEB_SERVER` to `nginx`.
+> - `--env BP_WEB_SERVER_ENABLE_PUSH_STATE=true`: Sets the environment variable `BP_WEB_SERVER_ENABLE_PUSH_STATE` to `true`.
+> - `--env BP_NODE_VERSION=22.13.0`: Sets the environment variable `BP_NODE_VERSION` to `22.13.0`.
+> - `--env BP_WEB_SERVER_ROOT=dist`: Sets the environment variable `BP_WEB_SERVER_ROOT` to `dist`.
 
 ## Step 2: Build the Spring Boot Back-end Docker image
 
@@ -34,7 +44,11 @@ This guide provides step-by-step instructions to deploy the Angular front-end an
     mvn clean install -Pdocker
     ```
 
-> **Note:** The `docker` Maven profile uses the `pack` binary and the `paketobuildpacks/builder-jammy-base` builder and the `target/${project.build.finalName}.jar` JAR file to produce the Docker image.
+> **Note:** The `docker` Maven profile uses the `pack` binary and the `paketobuildpacks/builder-jammy-base` builder and the `target/${project.build.finalName}.jar` JAR file to produce the Docker image. 
+
+The following options are passed to `pack`:
+> - `--builder paketobuildpacks/builder-jammy-base`: Specifies the builder image to use.
+> - `--path target/${project.build.finalName}.jar`: Specifies the path to the JAR file to include in the image.
 
 ## Step 3: Create Azure Container Registry
 
