@@ -12,7 +12,7 @@ This guide provides step-by-step instructions to deploy the Angular front-end an
 
 1. Navigate to the Angular project directory:
     ```bash
-    cd frontend
+    cd spring-petclinic-angular
     ```
 
 2. Build the Docker image using Maven:
@@ -24,9 +24,9 @@ This guide provides step-by-step instructions to deploy the Angular front-end an
 
 ## Step 2: Build the Spring Boot Back-end Docker image
 
-1. Navigate to the Spring Boot project directory:
+1. Navigate to the Spring Boot Back-end project directory:
     ```bash
-    cd ../backend
+    cd ../spring-petclinic-rest
     ```
 
 2. Build the Spring Boot application and Docker image using Maven:
