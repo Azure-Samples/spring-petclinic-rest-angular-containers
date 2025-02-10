@@ -108,6 +108,24 @@ The following options are passed to `pack`:
     az containerapp create --name angular-frontend --resource-group myResourceGroup --environment myContainerAppEnv --image myacrregistry.azurecr.io/angular-frontend:latest --target-port 80 --ingress 'external' --env-vars REST_API_URL=http://spring-backend:8080/petclinic/api/
     ```
 
+## Step 6: Enable Application Insights (Optional)
+
+1. Create an Application Insights resource:
+    ```bash
+    az monitor app-insights component create --app myAppInsights --location eastus --resource-group myResourceGroup
+    ```
+
+2. Retrieve the connection string for the Application Insights resource:
+    ```bash
+    az monitor app-insights component show --app myAppInsights --resource-group myResourceGroup --query connectionString --output tsv
+    ```
+
+3. Update the Azure Container Apps to use the Application Insights connection string:
+    ```bash
+    az containerapp update --name spring-backend --resource-group myResourceGroup --environment myContainerAppEnv --env-vars APPLICATIONINSIGHTS_CONNECTION_STRING=<your_connection_string>
+    az containerapp update --name angular-frontend --resource-group myResourceGroup --environment myContainerAppEnv --env-vars APPLICATIONINSIGHTS_CONNECTION_STRING=<your_connection_string>
+    ```
+
 ## Conclusion
 
 You have successfully deployed the Angular front-end and the Spring Boot REST back-end to Azure Container Apps. The back-end is private and only accessible by the front-end.
@@ -119,6 +137,6 @@ az containerapp show --name angular-frontend --resource-group myResourceGroup --
 
 ## Azure DevOps
 
-See [Azure DevOps Pipeline example](azure-pipelines-aca.yml) for an example of how to do everything mentioned above in a pipeline.
+See [Azure DevOps Pipeline example](azure-pipelines-aca.yml) for a CI/CD pipelin example.
 
 If you are looking to redeploy the two applications after your initial deployment, we recommend using the [AzureContainerApps@1 task](https://learn.microsoft.com/azure/container-apps/azure-pipelines#deploy-an-existing-container-image-to-container-apps) instead of the `AzureCLI@2 task` in the `Deploy` stage in the pipeline example.
