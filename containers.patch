@@ -259,10 +259,10 @@ index 0000000..481fcc5
 +};
 Submodule spring-petclinic-rest contains modified content
 diff --git a/spring-petclinic-rest/pom.xml b/spring-petclinic-rest/pom.xml
-index 1efba9d..38fbf5b 100644
+index 1efba9d..5c022d3 100644
 --- a/spring-petclinic-rest/pom.xml
 +++ b/spring-petclinic-rest/pom.xml
-@@ -480,4 +480,42 @@
+@@ -480,4 +480,51 @@
              </plugin>
          </plugins>
      </build>
@@ -292,9 +292,18 @@ index 1efba9d..38fbf5b 100644
 +                                        <argument>--builder</argument>
 +                                        <argument>paketobuildpacks/builder-jammy-base</argument>
 +                                        <argument>--env</argument>
-+                                        <argument>BP_EXECUTABLE_JAR_LOCATION=target/${project.build.finalName}.jar</argument>
-+                                        <argument>--env</argument>
 +                                        <argument>BP_JVM_VERSION=21</argument>
++                                        <!-- 
++                                        
++                                            The configuration below is used to enable Application Insights in the image.
++
++                                            Note you will still need to configure your application with the instrumentation key.
++
++                                            For Azure Container Apps, see https://learn.microsoft.com/en-us/azure/spring-apps/migration/migrate-to-azure-container-apps-build-application-performance-monitoring#configure-with-environment-variables
++
++                                            -->                      
++                                        <argument>--volume</argument>
++                                        <argument>${project.build.directory}/../src/main/paketo/bindings/application-insights:/platform/bindings/application-insights</argument>
 +                                    </arguments>
 +                                </configuration>
 +                            </execution>
@@ -305,3 +314,11 @@ index 1efba9d..38fbf5b 100644
 +        </profile>
 +    </profiles>
  </project>
+diff --git a/spring-petclinic-rest/src/main/paketo/bindings/application-insights/type b/spring-petclinic-rest/src/main/paketo/bindings/application-insights/type
+new file mode 100644
+index 0000000..1737bf4
+--- /dev/null
++++ b/spring-petclinic-rest/src/main/paketo/bindings/application-insights/type
+@@ -0,0 +1 @@
++ApplicationInsights
+\ No newline at end of file
