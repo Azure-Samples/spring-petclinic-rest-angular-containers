@@ -48,7 +48,10 @@ The following options are passed to `pack`:
 
 The following options are passed to `pack`:
 > - `--builder paketobuildpacks/builder-jammy-base`: Specifies the builder image to use.
-> - `--path target/${project.build.finalName}.jar`: Specifies the path to the JAR file to include in the image.
+> - `--buildpack paketo-buildpacks/microsoft-openjdk`: Specifies the buildpack to use for the JDK.
+> - `--buildpack paketo-buildpacks/java`: Specifies the buildpack to use for Java applications.
+> - `--env BP_JVM_VERSION=21`: Sets the environment variable `BP_JVM_VERSION` to `21`.
+> - `--volume ${project.build.directory}/../src/main/paketo/bindings/application-insights:/platform/bindings/application-insights`: Mounts the Application Insights bindings directory.
 
 ## Step 3: Create Azure Container Registry
 
