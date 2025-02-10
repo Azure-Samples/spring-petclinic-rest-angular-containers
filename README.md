@@ -34,6 +34,7 @@ The `containers.patch` file contains the necessary changes to configure the Spri
 #### Spring Boot REST - Configuration Changes
 
 - **pom.xml**: Updates to include a Docker build profile using the `exec-maven-plugin` for building Docker images with Paketo buildpacks.
+- **type**: Addition of a Paketo bindings type file that enables Azure Application Insights.
 
 ### Container runtime
 
